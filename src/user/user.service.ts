@@ -27,11 +27,11 @@ export class UserService {
       where: [{ id }, { email }],
     });
 
-    console.log({ id, email });
-
     if (!found) {
       throw new NotFoundException(`User not found`);
     }
+
+    console.log('user', found);
 
     return found;
   }

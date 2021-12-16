@@ -27,11 +27,7 @@ export class AuthController {
   @Post('/user/signup')
   @HttpCode(HttpStatus.CREATED)
   userSignup(@Body() data: UserSignupDto): Promise<Tokens> {
-    return this.authService.userSignup({
-      email: data.email,
-      name: data.name,
-      password: data.password,
-    });
+    return this.authService.userSignup(data);
   }
 
   @Public()
