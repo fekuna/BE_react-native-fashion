@@ -22,6 +22,7 @@ export class AuthService {
       email: data.email,
       name: data.name,
       hashPassword: hash,
+      role: 'user',
     });
 
     const tokens = await this.getTokens(

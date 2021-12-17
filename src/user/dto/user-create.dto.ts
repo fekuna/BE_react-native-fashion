@@ -12,4 +12,7 @@ export class UserCreateDto {
 
   @IsString()
   hashPassword: string;
+
+  @IsString()
+  role: string;
 }

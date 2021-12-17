@@ -31,8 +31,6 @@ export class UserService {
       throw new NotFoundException(`User not found`);
     }
 
-    console.log('user', found);
-
     return found;
   }
 
@@ -49,7 +47,7 @@ export class UserService {
       email: data.email,
       name: data.name,
       password: data.hashPassword,
-      role: 'user',
+      role: data.role,
     });
 
     return created;

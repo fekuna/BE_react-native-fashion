@@ -7,6 +7,8 @@ import { AtGuard } from './common/guards';
 import { typeOrmConfig } from './config/typeorm.config';
 import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
+import { RoleModule } from './role/role.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { ProductModule } from './product/product.module';
     AuthModule,
     UserModule,
     ProductModule,
+    RoleModule,
+    PermissionModule,
   ],
   providers: [
     {
