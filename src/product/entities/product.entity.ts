@@ -23,7 +23,9 @@ export class Product extends BaseEntity {
   @Column('double')
   price: number;
 
-  @ManyToOne(() => User, (user) => user.products)
+  @ManyToOne(() => User, (user) => user.products, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

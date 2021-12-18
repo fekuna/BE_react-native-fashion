@@ -47,13 +47,20 @@ export class UserService {
       email: data.email,
       name: data.name,
       password: data.hashPassword,
-      role: data.role,
+      role: {
+        id: data.role,
+      },
     });
 
     return created;
   }
 
   async userUpdate(id: string, data: UserUpdateDto): Promise<void> {
-    await this.userRepository.update(id, data);
+    await this.userRepository.update(id, {
+      ...data,
+      role: {
+        id: data.role,
+      },
+    });
   }
 }

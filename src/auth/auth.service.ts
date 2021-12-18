@@ -22,13 +22,13 @@ export class AuthService {
       email: data.email,
       name: data.name,
       hashPassword: hash,
-      role: 'user',
+      role: 1,
     });
 
     const tokens = await this.getTokens(
       newUser.id,
       newUser.email,
-      newUser.role,
+      newUser.role.id,
     );
     await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
@@ -41,7 +41,7 @@ export class AuthService {
     if (!passwordMatches)
       throw new ForbiddenException('Incorrect Email or Password');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
+    const tokens = await this.getTokens(user.id, user.email, user.role.id);
     await this.updateRtHash(user.id, tokens.refresh_token);
 
     return tokens;
@@ -61,7 +61,7 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, user.rt_hash);
     if (!rtMatches) throw new ForbiddenException('Access denied');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role);
+    const tokens = await this.getTokens(user.id, user.email, user.role.id);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
@@ -80,7 +80,7 @@ export class AuthService {
   async getTokens(
     userId: string,
     email: string,
-    role: string,
+    role: number,
   ): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(

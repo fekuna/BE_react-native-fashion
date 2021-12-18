@@ -1,7 +1,15 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
 import { Product } from 'src/product/entities/product.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Role } from 'src/role/entities/role.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -22,13 +30,14 @@ export class User {
   @Exclude()
   password: string;
 
-  @Column()
-  role: string;
-
   @Column({ nullable: true })
   rt_hash: string;
 
   @OneToMany(() => Product, (product) => product.user)
   @Exclude({ toPlainOnly: true })
   products: Product[];
+
+  @ManyToOne(() => Role)
+  @JoinColumn({ name: 'role_id' })
+  role: Role;
 }

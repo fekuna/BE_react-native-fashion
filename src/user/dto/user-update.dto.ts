@@ -3,6 +3,6 @@ export class UserUpdateDto {
   name?: string;
   password?: string;
   address?: string;
-  role?: string;
+  role?: number;
   rt_hash?: string;
 }
