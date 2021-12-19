@@ -52,7 +52,7 @@ export class UserService {
       name: data.name,
       password: data.hashPassword,
       role: {
-        id: '5d3a036e-3644-40af-a575-b2bdfa1aa13f',
+        id: 1,
       },
     });
 
@@ -65,7 +65,7 @@ export class UserService {
     await this.userRepository.update(id, {
       ...data,
       role: {
-        id: '5d3a036e-3644-40af-a575-b2bdfa1aa13f',
+        id: 1,
       },
     });
   }
