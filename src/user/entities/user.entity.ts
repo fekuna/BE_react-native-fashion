@@ -3,6 +3,7 @@ import { IsEmail } from 'class-validator';
 import { Product } from 'src/product/entities/product.entity';
 import { Role } from 'src/role/entities/role.entity';
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -12,7 +13,7 @@ import {
 } from 'typeorm';
 
 @Entity('users')
-export class User {
+export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -37,7 +38,9 @@ export class User {
   @Exclude({ toPlainOnly: true })
   products: Product[];
 
-  @ManyToOne(() => Role)
-  @JoinColumn({ name: 'role_id' })
+  @ManyToOne(() => Role, (role) => role.users, {
+    cascade: true,
+  })
+  @JoinColumn()
   role: Role;
 }

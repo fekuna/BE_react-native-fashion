@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RoleService } from 'src/role/role.service';
 import { Repository } from 'typeorm';
 import { UserCreateDto } from './dto/user-create.dto';
 import { UserUpdateDto } from './dto/user-update.dto';
@@ -14,6 +15,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private roleService: RoleService,
   ) {}
 
   async getUserBy({
@@ -43,14 +45,18 @@ export class UserService {
       throw new ConflictException('Email already registered');
     }
 
+    // const role = await this.roleService.findOne({ id: data.role });
+
     const created = await this.userRepository.save({
       email: data.email,
       name: data.name,
       password: data.hashPassword,
       role: {
-        id: data.role,
+        id: '68b5dc91-c566-4c09-b043-74748de0cf0d',
       },
     });
+
+    console.log('userCreate: ', created);
 
     return created;
   }
@@ -59,7 +65,7 @@ export class UserService {
     await this.userRepository.update(id, {
       ...data,
       role: {
-        id: data.role,
+        id: '68b5dc91-c566-4c09-b043-74748de0cf0d',
       },
     });
   }

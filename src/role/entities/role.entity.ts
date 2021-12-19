@@ -1,16 +1,20 @@
+import { Exclude } from 'class-transformer';
 import { Permission } from 'src/permission/entities/permission.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity('roles')
-export class Role {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Role extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;
@@ -22,4 +26,8 @@ export class Role {
     inverseJoinColumn: { name: 'permission_id', referencedColumnName: 'id' },
   })
   permissions: Permission[];
+
+  @OneToMany(() => User, (user) => user.role, { eager: true })
+  @Exclude({ toPlainOnly: true })
+  users: User[];
 }

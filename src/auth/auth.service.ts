@@ -25,11 +25,9 @@ export class AuthService {
       role: 1,
     });
 
-    const tokens = await this.getTokens(
-      newUser.id,
-      newUser.email,
-      newUser.role.id,
-    );
+    console.log('authService:', newUser);
+
+    const tokens = await this.getTokens(newUser.id, newUser.email, 1);
     await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
@@ -41,7 +39,7 @@ export class AuthService {
     if (!passwordMatches)
       throw new ForbiddenException('Incorrect Email or Password');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role.id);
+    const tokens = await this.getTokens(user.id, user.email, 1);
     await this.updateRtHash(user.id, tokens.refresh_token);
 
     return tokens;
@@ -61,7 +59,7 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, user.rt_hash);
     if (!rtMatches) throw new ForbiddenException('Access denied');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role.id);
+    const tokens = await this.getTokens(user.id, user.email, 1);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
