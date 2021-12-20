@@ -8,4 +8,7 @@ export class ProductCreateDto {
 
   @IsNotEmpty()
   price: number;
+
+  @IsNotEmpty()
+  stock: number;
 }

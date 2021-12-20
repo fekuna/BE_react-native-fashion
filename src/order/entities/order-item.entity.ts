@@ -16,7 +16,7 @@ export class OrderItem extends BaseEntity {
   @Column()
   product_title: string;
 
-  @Column()
+  @Column('double')
   price: number;
 
   @Column()

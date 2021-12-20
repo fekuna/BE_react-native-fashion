@@ -28,7 +28,7 @@ export class AuthController {
   userSignup(@Body() data: UserSignupDto): Promise<Tokens> {
     return this.authService.userSignup(
       data,
-      '3b1d7baf-f08d-4ee6-97c0-72be7e8d19ec',
+      '44157d45-6d48-4106-9f66-1c7c643aff78',
     );
   }
 
@@ -57,4 +57,12 @@ export class AuthController {
   }
 
   // =========================== SELLER ROUTES ========================
+  @Public()
+  @Post('/seller/signup')
+  sellerSignup(@Body() data: UserSignupDto): Promise<Tokens> {
+    return this.authService.userSignup(
+      data,
+      '55aea481-f2b9-47bf-a282-dc2aa56b01cf',
+    );
+  }
 }

@@ -17,7 +17,9 @@ export class UserController {
   @Public()
   @Get('/:id')
   async getUserById(@Param('id') id: string): Promise<User> {
-    const user = await this.userService.getUserBy({ id });
+    const user = await this.userService.getUserBy({
+      id,
+    });
     console.log('User Controller', user);
     return user;
   }

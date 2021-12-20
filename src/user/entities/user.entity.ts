@@ -36,7 +36,7 @@ export class User extends BaseEntity {
   rt_hash: string;
 
   @OneToMany(() => Product, (product) => product.user)
-  @Exclude({ toPlainOnly: true })
+  // @Exclude({ toPlainOnly: true })
   products: Product[];
 
   @ManyToOne(() => Role, (role) => role.users)

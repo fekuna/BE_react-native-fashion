@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { OrderCreateResponseDto } from './dto/order-create-response.dto';
+import { OrderItemDto } from './dto/order-item.dto';
 import { OrderItem } from './entities/order-item.entity';
 import { Order } from './entities/order.entity';
 
@@ -13,42 +15,47 @@ export class OrderService {
     private readonly orderItemRepository: Repository<OrderItem>,
   ) {}
 
-  async orderCreate(userId: string) {
-    const testOrderItems = [
-      {
-        product_title: 'test_product',
-        price: 2,
-        quantity: 5,
-      },
-      {
-        product_title: 'test_product2',
-        price: 4,
-        quantity: 10,
-      },
-      {
-        product_title: 'test_product3',
-        price: 10,
-        quantity: 2,
-      },
-    ];
-
+  async orderCreate(
+    userId: string,
+    orderItems: OrderItemDto[],
+  ): Promise<OrderCreateResponseDto> {
     const order = await this.orderRepository.save({
       user: {
         id: userId,
       },
     });
 
-    const testOrderItemsWithOrderId = await testOrderItems.map((oi) => ({
-      ...oi,
+    orderItems = orderItems.map((orderItem) => ({
+      ...orderItem,
       order: {
         id: order.id,
       },
     }));
 
-    const orderItems = await this.orderItemRepository.save(
-      testOrderItemsWithOrderId,
-    );
+    await this.orderItemRepository.save(orderItems);
 
-    console.log(orderItems);
+    return {
+      id: order.id,
+      createdAt: order.created_at,
+      userId: order.user.id,
+      orderItems,
+    };
+  }
+
+  async getOrders(): Promise<Order[]> {
+    return await this.orderRepository.find({
+      relations: ['order_items'],
+    });
+  }
+
+  async getOrderUser(userId: string): Promise<any> {
+    return await this.orderRepository.find({
+      relations: ['order_items'],
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+    });
   }
 }

@@ -22,6 +22,9 @@ export class Product extends BaseEntity {
   @Column('double')
   price: number;
 
+  @Column()
+  stock: number;
+
   @ManyToOne(() => User, (user) => user.products, {
     cascade: true,
   })

@@ -19,7 +19,7 @@ export class Order extends BaseEntity {
   @CreateDateColumn()
   created_at: string;
 
-  @ManyToOne(() => User, (user) => user.orders, { cascade: true })
+  @ManyToOne(() => User, (user) => user.orders)
   @JoinColumn({ name: 'user_id' })
   user: User;
 

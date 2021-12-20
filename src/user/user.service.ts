@@ -21,14 +21,18 @@ export class UserService {
   async getUserBy({
     id,
     email,
+    relations,
   }: {
     id?: string;
     email?: string;
+    relations?: [string];
   }): Promise<User> {
     const found = await this.userRepository.findOne({
       where: [{ id }, { email }],
-      relations: ['role'],
+      relations,
     });
+
+    console.log('getUserBy wkowkok', found);
 
     if (!found) {
       throw new NotFoundException(`User not found`);
