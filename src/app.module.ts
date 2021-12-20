@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { ProductModule } from './product/product.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PermissionModule } from './permission/permission.module';
     ProductModule,
     RoleModule,
     PermissionModule,
+    OrderModule,
   ],
   providers: [
     {

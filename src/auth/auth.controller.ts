@@ -28,7 +28,7 @@ export class AuthController {
   userSignup(@Body() data: UserSignupDto): Promise<Tokens> {
     return this.authService.userSignup(
       data,
-      'a35de6a3-731d-460f-bd06-b4ce576c4eaf',
+      '3b1d7baf-f08d-4ee6-97c0-72be7e8d19ec',
     );
   }
 
@@ -55,4 +55,6 @@ export class AuthController {
   ) {
     return this.authService.refreshToken(userId, refreshToken);
   }
+
+  // =========================== SELLER ROUTES ========================
 }

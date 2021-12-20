@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { IsEmail } from 'class-validator';
+import { Order } from 'src/order/entities/order.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { Role } from 'src/role/entities/role.entity';
 import {
@@ -39,6 +40,10 @@ export class User extends BaseEntity {
   products: Product[];
 
   @ManyToOne(() => Role, (role) => role.users)
-  @JoinColumn()
+  @JoinColumn({ name: 'role_id' })
   role: Role;
+
+  @OneToMany(() => Order, (order) => order.user)
+  @Exclude({ toPlainOnly: true })
+  orders: Order[];
 }
