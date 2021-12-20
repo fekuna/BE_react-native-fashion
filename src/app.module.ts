@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { OrderModule } from './order/order.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { OrderModule } from './order/order.module';
     RoleModule,
     PermissionModule,
     OrderModule,
+    UploadModule,
   ],
   providers: [
     {
