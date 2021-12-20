@@ -38,9 +38,7 @@ export class User extends BaseEntity {
   @Exclude({ toPlainOnly: true })
   products: Product[];
 
-  @ManyToOne(() => Role, (role) => role.users, {
-    cascade: true,
-  })
+  @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn()
   role: Role;
 }

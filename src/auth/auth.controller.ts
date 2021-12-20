@@ -26,7 +26,10 @@ export class AuthController {
   @Public()
   @Post('/user/signup')
   userSignup(@Body() data: UserSignupDto): Promise<Tokens> {
-    return this.authService.userSignup(data);
+    return this.authService.userSignup(
+      data,
+      'a35de6a3-731d-460f-bd06-b4ce576c4eaf',
+    );
   }
 
   @Public()

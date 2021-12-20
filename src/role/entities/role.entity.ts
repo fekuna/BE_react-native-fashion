@@ -13,8 +13,8 @@ import {
 
 @Entity('roles')
 export class Role extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   name: string;
@@ -27,7 +27,7 @@ export class Role extends BaseEntity {
   })
   permissions: Permission[];
 
-  @OneToMany(() => User, (user) => user.role, { eager: true })
+  @OneToMany(() => User, (user) => user.role)
   @Exclude({ toPlainOnly: true })
   users: User[];
 }

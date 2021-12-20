@@ -27,6 +27,7 @@ export class UserService {
   }): Promise<User> {
     const found = await this.userRepository.findOne({
       where: [{ id }, { email }],
+      relations: ['role'],
     });
 
     if (!found) {
@@ -36,7 +37,7 @@ export class UserService {
     return found;
   }
 
-  async userCreate(data: UserCreateDto): Promise<User> {
+  async userCreate(data: UserCreateDto, roleId: string): Promise<User> {
     const emailExists = await this.userRepository.findOne({
       email: data.email,
     });
@@ -45,14 +46,12 @@ export class UserService {
       throw new ConflictException('Email already registered');
     }
 
-    // const role = await this.roleService.findOne({ id: data.role });
-
     const created = await this.userRepository.save({
       email: data.email,
       name: data.name,
       password: data.hashPassword,
       role: {
-        id: 1,
+        id: roleId,
       },
     });
 
@@ -62,11 +61,6 @@ export class UserService {
   }
 
   async userUpdate(id: string, data: UserUpdateDto): Promise<void> {
-    await this.userRepository.update(id, {
-      ...data,
-      role: {
-        id: 1,
-      },
-    });
+    await this.userRepository.update(id, data);
   }
 }
