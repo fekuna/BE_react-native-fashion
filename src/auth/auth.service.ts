@@ -29,19 +29,22 @@ export class AuthService {
 
     console.log('authService:', newUser);
 
-    const tokens = await this.getTokens(newUser.id, newUser.email, 1);
+    const tokens = await this.getTokens(newUser.id, newUser.email, roleId);
     await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
 
   async userSignin(data: UserSigninDto): Promise<Tokens> {
-    const user = await this.userService.getUserBy({ email: data.email });
+    const user = await this.userService.getUserBy({
+      email: data.email,
+      relations: ['role'],
+    });
 
     const passwordMatches = await bcrypt.compare(data.password, user.password);
     if (!passwordMatches)
       throw new ForbiddenException('Incorrect Email or Password');
 
-    const tokens = await this.getTokens(user.id, user.email, 1);
+    const tokens = await this.getTokens(user.id, user.email, user.role.id);
     await this.updateRtHash(user.id, tokens.refresh_token);
 
     return tokens;
@@ -61,7 +64,7 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, user.rt_hash);
     if (!rtMatches) throw new ForbiddenException('Access denied');
 
-    const tokens = await this.getTokens(user.id, user.email, 1);
+    const tokens = await this.getTokens(user.id, user.email, user.role.id);
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
@@ -69,6 +72,7 @@ export class AuthService {
   // ================= MISC =================
 
   async updateRtHash(userId: string, rt: string) {
+    console.log('updateRtHash');
     const hash = await this.hashData(rt);
     await this.userService.userUpdate(userId, { rt_hash: hash });
   }
@@ -80,14 +84,14 @@ export class AuthService {
   async getTokens(
     userId: string,
     email: string,
-    role: number,
+    roleId: string,
   ): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           email,
-          role,
+          roleId,
         },
         {
           secret: this.config.get<string>('AT_SECRET'),
@@ -98,7 +102,7 @@ export class AuthService {
         {
           sub: userId,
           email,
-          role,
+          roleId,
         },
         {
           secret: this.config.get<string>('RT_SECRET'),

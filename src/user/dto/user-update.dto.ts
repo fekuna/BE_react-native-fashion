@@ -4,4 +4,5 @@ export class UserUpdateDto {
   password?: string;
   address?: string;
   rt_hash?: string;
+  img?: string;
 }

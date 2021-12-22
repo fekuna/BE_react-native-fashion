@@ -10,10 +10,11 @@ import { ProductModule } from './product/product.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { OrderModule } from './order/order.module';
-import { UploadModule } from './upload/upload.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
+    MulterModule.register({ dest: './files' }),
     TypeOrmModule.forRoot(typeOrmConfig),
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
@@ -22,7 +23,6 @@ import { UploadModule } from './upload/upload.module';
     RoleModule,
     PermissionModule,
     OrderModule,
-    UploadModule,
   ],
   providers: [
     {

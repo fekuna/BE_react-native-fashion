@@ -28,6 +28,9 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   address: string;
 
+  @Column({ default: 'users/img/profile-default.jpg' })
+  img: string;
+
   @Column()
   @Exclude()
   password: string;
