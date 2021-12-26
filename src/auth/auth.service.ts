@@ -16,7 +16,7 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
-  async userSignup(data: UserSignupDto, roleId: string): Promise<Tokens> {
+  async userSignup(data: UserSignupDto, roleId: number): Promise<Tokens> {
     const hash = await this.hashData(data.password);
 
     const newUser = await this.userService.userCreate(

@@ -47,7 +47,7 @@ export class UserService {
     return found;
   }
 
-  async userCreate(data: UserCreateDto, roleId: string): Promise<User> {
+  async userCreate(data: UserCreateDto, roleId: number): Promise<User> {
     const emailExists = await this.userRepository.findOne({
       email: data.email,
     });
@@ -61,7 +61,7 @@ export class UserService {
       name: data.name,
       password: data.hashPassword,
       role: {
-        id: roleId,
+        id: 2,
       },
     });
 

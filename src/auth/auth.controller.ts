@@ -26,10 +26,7 @@ export class AuthController {
   @Public()
   @Post('/auth/signup')
   userSignup(@Body() data: UserSignupDto): Promise<Tokens> {
-    return this.authService.userSignup(
-      data,
-      '44157d45-6d48-4106-9f66-1c7c643aff78',
-    );
+    return this.authService.userSignup(data, 0);
   }
 
   @Public()
@@ -61,9 +58,6 @@ export class AuthController {
   @Public()
   @Post('/seller/signup')
   sellerSignup(@Body() data: UserSignupDto): Promise<Tokens> {
-    return this.authService.userSignup(
-      data,
-      '55aea481-f2b9-47bf-a282-dc2aa56b01cf',
-    );
+    return this.authService.userSignup(data, 1);
   }
 }
