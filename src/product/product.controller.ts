@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UploadedFiles,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -19,6 +20,12 @@ import { FilterProductsDto } from './dto/filter-products.dto';
 import { Product } from './entities/product.entity';
 import { ProductService } from './product.service';
 import { ProductUpdateDto } from './dto/product-update.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import {
+  editProductImageName,
+  productImageFilter,
+} from './utils/product-file-upload.utils';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('products')
@@ -35,12 +42,22 @@ export class ProductController {
   }
 
   @Post()
+  @UseInterceptors(
+    FilesInterceptor('image', 10, {
+      storage: diskStorage({
+        destination: './files/images/product',
+        filename: editProductImageName,
+      }),
+      fileFilter: productImageFilter,
+    }),
+  )
   @HttpCode(HttpStatus.CREATED)
   async createProduct(
     @Body() createProductDto: ProductCreateDto,
-    @GetCurrentUserId() user: string,
+    @GetCurrentUserId() userId: string,
+    @UploadedFiles() images: Express.Multer.File[],
   ): Promise<Product> {
-    return this.productService.createProduct(createProductDto, user);
+    return this.productService.createProduct(createProductDto, userId, images);
   }
 
   @Put('/:id')

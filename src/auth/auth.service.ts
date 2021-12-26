@@ -6,6 +6,7 @@ import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
+import { JwtPayloadDto } from './dto/jwt-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +30,12 @@ export class AuthService {
 
     console.log('authService:', newUser);
 
-    const tokens = await this.getTokens(newUser.id, newUser.email, roleId);
+    const tokens = await this.getTokens({
+      sub: newUser.id,
+      email: newUser.email,
+      roleId: roleId,
+      img: newUser.img,
+    });
     await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
@@ -44,7 +50,12 @@ export class AuthService {
     if (!passwordMatches)
       throw new ForbiddenException('Incorrect Email or Password');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role.id);
+    const tokens = await this.getTokens({
+      sub: user.id,
+      email: user.email,
+      roleId: user.role.id,
+      img: user.img,
+    });
     await this.updateRtHash(user.id, tokens.refresh_token);
 
     return tokens;
@@ -57,6 +68,7 @@ export class AuthService {
   async refreshToken(userId: string, rt: string) {
     const user = await this.userService.getUserBy({
       id: userId,
+      relations: ['role'],
     });
 
     if (!user.rt_hash) throw new ForbiddenException('Access denied');
@@ -64,7 +76,12 @@ export class AuthService {
     const rtMatches = await bcrypt.compare(rt, user.rt_hash);
     if (!rtMatches) throw new ForbiddenException('Access denied');
 
-    const tokens = await this.getTokens(user.id, user.email, user.role.id);
+    const tokens = await this.getTokens({
+      sub: user.id,
+      email: user.email,
+      roleId: user.role.id,
+      img: user.img,
+    });
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
   }
@@ -81,17 +98,14 @@ export class AuthService {
     return bcrypt.hash(data, 10);
   }
 
-  async getTokens(
-    userId: string,
-    email: string,
-    roleId: string,
-  ): Promise<Tokens> {
+  async getTokens({ sub, email, roleId, img }: JwtPayloadDto): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: userId,
+          sub,
           email,
           roleId,
+          img,
         },
         {
           secret: this.config.get<string>('AT_SECRET'),
@@ -100,9 +114,10 @@ export class AuthService {
       ),
       this.jwtService.signAsync(
         {
-          sub: userId,
+          sub,
           email,
           roleId,
+          img,
         },
         {
           secret: this.config.get<string>('RT_SECRET'),

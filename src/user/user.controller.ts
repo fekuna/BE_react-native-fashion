@@ -10,14 +10,11 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import {
-  GetCurrentUser,
-  GetCurrentUserId,
-  Public,
-} from 'src/common/decorators';
+import { JwtPayloadDto } from 'src/auth/dto/jwt-payload.dto';
+import { GetCurrentUser, Public } from 'src/common/decorators';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
-import { editFileName, imageFileFilter } from './utils/file-upload.utils';
+import { editFileName, imageFileFilter } from './utils/user-file-upload.utils';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -50,8 +47,10 @@ export class UserController {
       fileFilter: imageFileFilter,
     }),
   )
-  async userUpdateImage(@GetCurrentUserId() userId, @UploadedFile() file) {
-    console.log('userUpdateImage:', file);
-    return this.userService.userUpdatePhoto(userId, file.filename);
+  async userUpdateImage(
+    @GetCurrentUser() user: JwtPayloadDto,
+    @UploadedFile() file,
+  ) {
+    return this.userService.userUpdatePhoto(user, file.filename);
   }
 }

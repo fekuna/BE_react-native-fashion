@@ -5,13 +5,15 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ProductImage } from './product-image.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column()
   title: string;
@@ -24,6 +26,9 @@ export class Product extends BaseEntity {
 
   @Column()
   stock: number;
+
+  @OneToMany(() => ProductImage, (pImage) => pImage.product)
+  product_images: ProductImage[];
 
   @ManyToOne(() => User, (user) => user.products, {
     cascade: true,

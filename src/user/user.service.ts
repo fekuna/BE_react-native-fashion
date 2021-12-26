@@ -14,6 +14,7 @@ import { User } from './entities/user.entity';
 
 import * as fs from 'fs';
 import { promisify } from 'util';
+import { JwtPayloadDto } from 'src/auth/dto/jwt-payload.dto';
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -38,8 +39,6 @@ export class UserService {
       where: [{ id }, { email }],
       relations,
     });
-
-    console.log('getUserBy wkowkok', found);
 
     if (!found) {
       throw new NotFoundException(`User not found`);
@@ -73,22 +72,20 @@ export class UserService {
     await this.userRepository.update(id, data);
   }
 
-  async userUpdatePhoto(userId: string, imgName: string): Promise<void> {
-    console.log('userUpdatePhoto', { userId });
+  async userUpdatePhoto(user: JwtPayloadDto, newImage: string): Promise<void> {
     try {
-      await this.userRepository.update(userId, {
-        img: `users/img/${imgName}`,
+      await this.userRepository.update(user.sub, {
+        img: `users/img/${newImage}`,
       });
     } catch (err) {
-      await unlinkAsync(`./files/images/profile/${imgName}`);
+      console.log(err);
+      await unlinkAsync(`./files/images/profile/${newImage}`);
       throw new BadRequestException(`Something went wrong, try again later.`);
     }
 
-    // if (user.img !== 'users/img/profile-default.jpg') {
-    //   console.log('hehe', user.img);
-    //   const oldImageName = user.img.split('/');
-    //   console.log('xixi:', oldImageName);
-    //   // await unlinkAsync(`./files/images/profile/${oldImageName}`);
-    // }
+    if (user.img !== 'users/img/profile-default.jpg') {
+      const oldImageName = user.img.split('/')[2];
+      await unlinkAsync(`./files/images/profile/${oldImageName}`);
+    }
   }
 }

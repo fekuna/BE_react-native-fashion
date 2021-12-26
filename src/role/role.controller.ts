@@ -29,11 +29,11 @@ export class RoleController {
   @Post()
   async createRole(
     @Body('name') name: string,
-    @Body('permissions') ids: number[],
+    @Body('permissions') ids?: number[],
   ): Promise<Role> {
     return await this.roleService.create({
       name,
-      permissions: ids.map((id) => ({ id })),
+      permissions: ids?.map((id) => ({ id })),
     });
   }
 

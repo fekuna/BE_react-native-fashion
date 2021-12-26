@@ -5,16 +5,18 @@ import { ProductCreateDto } from './dto/product-create.dto';
 import { FilterProductsDto } from './dto/filter-products.dto';
 import { Product } from './entities/product.entity';
 import { ProductUpdateDto } from './dto/product-update.dto';
+import { ProductImage } from './entities/product-image.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
   ) {}
 
   async getProducts(filter: FilterProductsDto): Promise<any> {
-    console.log('Product Service', filter);
     const { take, page, keyword } = filter;
     const skip = (page - 1) * take;
 
@@ -46,20 +48,36 @@ export class ProductService {
   async createProduct(
     createProductDto: ProductCreateDto,
     userId: string,
+    images: Express.Multer.File[],
   ): Promise<Product> {
-    const product = await this.productRepository.create({
-      ...createProductDto,
-      user: {
-        id: userId,
-      },
+    const product = await this.productRepository
+      .create({
+        ...createProductDto,
+        user: {
+          id: userId,
+        },
+      })
+      .save();
+
+    const productImages = images.map((image) => {
+      return {
+        imgPath: image.filename,
+        product: {
+          id: product.id,
+        },
+      };
     });
+
+    await this.productImageRepository.save(productImages);
+
+    console.log('Product CREATED:', product);
+    console.log('ProductImages CREATED:', productImages);
 
     console.log({
       ...createProductDto,
       userId,
+      images,
     });
-
-    await product.save();
 
     return product;
   }
