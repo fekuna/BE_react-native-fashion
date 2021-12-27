@@ -11,6 +11,7 @@ import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
 import { OrderModule } from './order/order.module';
 import { MulterModule } from '@nestjs/platform-express';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MulterModule } from '@nestjs/platform-express';
     RoleModule,
     PermissionModule,
     OrderModule,
+    CartModule,
   ],
   providers: [
     {

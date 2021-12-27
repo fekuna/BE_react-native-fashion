@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { ProductCreateDto } from './dto/product-create.dto';
@@ -15,6 +15,25 @@ export class ProductService {
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<ProductImage>,
   ) {}
+
+  async getProductBy({
+    id,
+    relations,
+  }: {
+    id?: number;
+    relations?: string[];
+  }): Promise<Product> {
+    const found = await this.productRepository.findOne({
+      where: [{ id }],
+      relations,
+    });
+
+    if (!found) {
+      throw new NotFoundException(`Product not found`);
+    }
+
+    return found;
+  }
 
   async getProducts(filter: FilterProductsDto): Promise<any> {
     const { take, page, keyword } = filter;

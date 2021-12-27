@@ -30,9 +30,7 @@ export class Product extends BaseEntity {
   @OneToMany(() => ProductImage, (pImage) => pImage.product)
   product_images: ProductImage[];
 
-  @ManyToOne(() => User, (user) => user.products, {
-    cascade: true,
-  })
+  @ManyToOne(() => User, (user) => user.products)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

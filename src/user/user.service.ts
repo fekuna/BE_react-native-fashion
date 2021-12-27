@@ -33,7 +33,7 @@ export class UserService {
   }: {
     id?: string;
     email?: string;
-    relations?: [string];
+    relations?: string[];
   }): Promise<User> {
     const found = await this.userRepository.findOne({
       where: [{ id }, { email }],
