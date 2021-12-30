@@ -20,18 +20,23 @@ export class CartService {
   ) {}
 
   async getCartItemBy({
+    id,
     productId,
     relations,
   }: {
+    id?: number;
     productId?: number;
     relations?: string[];
   }) {
     const cartItem = await this.cartRepository.findOne({
-      where: {
-        product: {
-          id: productId,
+      where: [
+        { id },
+        {
+          product: {
+            id: productId,
+          },
         },
-      },
+      ],
       relations,
     });
 
@@ -91,11 +96,13 @@ export class CartService {
 
     const productFound = await this.productService.getProductBy({
       id: data.productId,
+      relations: ['user'],
     });
+    console.log('Add To Cart');
 
     if (
-      cartItem.quantity + data.quantity > productFound.stock ||
-      data.quantity > productFound.stock
+      cartItem?.quantity + data.quantity > productFound?.stock ||
+      data.quantity > productFound?.stock
     ) {
       console.log('stock is not sufficient');
       throw new BadRequestException('Stock is not sufficient');
@@ -103,8 +110,7 @@ export class CartService {
 
     if (cartItem) {
       console.log('Item already exists');
-      return await this.updateCartItem(cartItem.id, {
-        productId: data.productId,
+      return await this.cartRepository.update(cartItem.id, {
         quantity: cartItem.quantity + data.quantity,
       });
     }
@@ -122,7 +128,7 @@ export class CartService {
 
   async updateCartItem(cartItemId: number, data: UpdateCartItemDto) {
     const productFound = await this.getCartItemBy({
-      productId: data.productId,
+      id: cartItemId,
       relations: ['product'],
     });
 
@@ -140,5 +146,9 @@ export class CartService {
 
   async deleteCartItem(id: number) {
     return await this.cartRepository.delete(id);
+  }
+
+  async deleteCartUser(userId: string) {
+    return await this.cartRepository.delete({ user: { id: userId } });
   }
 }

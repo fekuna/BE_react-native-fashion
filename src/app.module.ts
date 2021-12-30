@@ -12,6 +12,7 @@ import { PermissionModule } from './permission/permission.module';
 import { OrderModule } from './order/order.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { CartModule } from './cart/cart.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CartModule } from './cart/cart.module';
     PermissionModule,
     OrderModule,
     CartModule,
+    CategoryModule,
   ],
   providers: [
     {

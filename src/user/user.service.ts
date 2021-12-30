@@ -61,7 +61,7 @@ export class UserService {
       name: data.name,
       password: data.hashPassword,
       role: {
-        id: 2,
+        id: roleId,
       },
     });
 

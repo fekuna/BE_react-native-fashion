@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class OrderItemDto {
   @IsNotEmpty()
-  product_title: string;
+  productTitle: string;
 
   @IsNotEmpty()
   price: number;

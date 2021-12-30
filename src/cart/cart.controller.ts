@@ -26,12 +26,12 @@ export class CartController {
   @Get()
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
-  async getProducts(
+  async getCart(
     @GetCurrentUserId() userId,
     @Query() filter: CartFilterDto,
   ): Promise<Cart[]> {
     console.log('Cart Controller', filter);
-    return this.cartService.getCart(userId, filter);
+    return this.cartService.getCart(userId, filter, ['product']);
   }
 
   @Post()

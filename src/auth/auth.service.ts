@@ -16,13 +16,15 @@ export class AuthService {
     private readonly config: ConfigService,
   ) {}
 
-  async userSignup(data: UserSignupDto, roleId: number): Promise<Tokens> {
-    const hash = await this.hashData(data.password);
+  async userSignup(data: UserSignupDto): Promise<Tokens> {
+    const { email, name, password, roleId } = data;
+
+    const hash = await this.hashData(password);
 
     const newUser = await this.userService.userCreate(
       {
-        email: data.email,
-        name: data.name,
+        email: email,
+        name: name,
         hashPassword: hash,
       },
       roleId,
@@ -32,6 +34,7 @@ export class AuthService {
 
     const tokens = await this.getTokens({
       sub: newUser.id,
+      name: newUser.name,
       email: newUser.email,
       roleId: roleId,
       img: newUser.img,
@@ -52,6 +55,7 @@ export class AuthService {
 
     const tokens = await this.getTokens({
       sub: user.id,
+      name: user.name,
       email: user.email,
       roleId: user.role.id,
       img: user.img,
@@ -78,6 +82,7 @@ export class AuthService {
 
     const tokens = await this.getTokens({
       sub: user.id,
+      name: user.name,
       email: user.email,
       roleId: user.role.id,
       img: user.img,
@@ -98,23 +103,32 @@ export class AuthService {
     return bcrypt.hash(data, 10);
   }
 
-  async getTokens({ sub, email, roleId, img }: JwtPayloadDto): Promise<Tokens> {
+  async getTokens({
+    sub,
+    email,
+    roleId,
+    img,
+    name,
+  }: JwtPayloadDto): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub,
+          name,
           email,
           roleId,
           img,
         },
         {
           secret: this.config.get<string>('AT_SECRET'),
-          expiresIn: 60 * 15,
+          expiresIn: 60 * 60,
+          // expiresIn: 10 * 1,
         },
       ),
       this.jwtService.signAsync(
         {
           sub,
+          name,
           email,
           roleId,
           img,
@@ -122,6 +136,7 @@ export class AuthService {
         {
           secret: this.config.get<string>('RT_SECRET'),
           expiresIn: 60 * 60 * 24 * 7,
+          // expiresIn: 20 * 1,
         },
       ),
     ]);

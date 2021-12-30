@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -9,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UploadedFiles,
   UseInterceptors,
   UsePipes,
@@ -37,8 +39,8 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getProducts(@Query() filter: FilterProductsDto): Promise<Product[]> {
-    console.log('Product Controller', filter);
-    return this.productService.getProducts(filter);
+    // console.log('Product Controller', filter);
+    return this.productService.getProducts(filter, ['product_images']);
   }
 
   @Post()
@@ -57,6 +59,7 @@ export class ProductController {
     @GetCurrentUserId() userId: string,
     @UploadedFiles() images: Express.Multer.File[],
   ): Promise<Product> {
+    console.log('createProductController: ', createProductDto);
     return this.productService.createProduct(createProductDto, userId, images);
   }
 
@@ -67,5 +70,24 @@ export class ProductController {
     @Body() body: ProductUpdateDto,
   ): Promise<any> {
     return this.productService.updateProduct(productId, body);
+  }
+
+  @Delete('/:id')
+  async deleteProduct(
+    @Param('id') productId: number,
+    @GetCurrentUserId() userId: string,
+  ): Promise<any> {
+    return this.productService.deleteProduct(productId, userId);
+  }
+
+  @Public()
+  @Get('/:imgpath')
+  userImage(@Param('imgpath') image, @Res() res) {
+    return res.sendFile(image, { root: './files/images/product' });
+  }
+
+  @Delete('/img/:id')
+  deleteProductImage(@Param('id') imgId: number) {
+    return this.productService.deleteProductImage(imgId);
   }
 }

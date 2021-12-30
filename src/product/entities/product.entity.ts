@@ -4,10 +4,13 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Category } from '../../category/entities/category.entity';
 import { ProductImage } from './product-image.entity';
 
 @Entity('products')
@@ -33,4 +36,20 @@ export class Product extends BaseEntity {
   @ManyToOne(() => User, (user) => user.products)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToMany(() => Category)
+  @JoinTable({
+    name: 'product_categories',
+    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
+  })
+  categories: Category[];
+
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'user_favorites',
+    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  })
+  user_favorites: User[];
 }

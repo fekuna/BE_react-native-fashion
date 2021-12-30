@@ -4,4 +4,8 @@ export class ProductUpdateDto {
   description?: string;
 
   price?: number;
+
+  stock?: number;
+
+  categories?: number[];
 }

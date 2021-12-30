@@ -33,4 +33,6 @@ export class UserSignupDto {
   @MaxLength(20)
   @Match('password', { message: 'Password do not match' })
   passwordConfirm: string;
+
+  roleId: number;
 }
