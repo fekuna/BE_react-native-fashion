@@ -6,23 +6,21 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { CartItem } from './cart-item.entity';
 
 @Entity('cart')
 export class Cart extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column()
-  quantity: number;
-
   @ManyToOne(() => User, (user) => user.cart)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToOne(() => Product)
-  @JoinColumn({ name: 'product_id' })
-  product: Product;
+  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
+  cartItems: CartItem[];
 }

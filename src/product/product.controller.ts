@@ -39,8 +39,11 @@ export class ProductController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ transform: true }))
   async getProducts(@Query() filter: FilterProductsDto): Promise<Product[]> {
-    // console.log('Product Controller', filter);
-    return this.productService.getProducts(filter, ['product_images']);
+    return this.productService.getProducts(filter, [
+      'product_images',
+      'categories',
+      'user_favorites',
+    ]);
   }
 
   @Post()

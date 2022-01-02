@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CartService } from 'src/cart/cart.service';
-import { Product } from 'src/product/entities/product.entity';
+import { ProductService } from 'src/product/product.service';
 import { Repository } from 'typeorm';
 import { OrderCreateResponseDto } from './dto/order-create-response.dto';
 import { OrderItem } from './entities/order-item.entity';
@@ -15,6 +15,7 @@ export class OrderService {
     @InjectRepository(OrderItem)
     private readonly orderItemRepository: Repository<OrderItem>,
     private readonly cartService: CartService,
+    private readonly productService: ProductService,
   ) {}
 
   async orderCreate(userId: string): Promise<OrderCreateResponseDto> {
@@ -43,6 +44,7 @@ export class OrderService {
     let orderItems = [];
     let updateProducts = [];
     cartItems.data.map((cartItem) => {
+      // Push to orderItems
       orderItems = [
         ...orderItems,
         {
@@ -58,6 +60,8 @@ export class OrderService {
           },
         },
       ];
+
+      // Push to updateProducts
       updateProducts = [
         ...updateProducts,
         {
@@ -71,7 +75,9 @@ export class OrderService {
     console.log('update Items', updateProducts);
     await this.orderItemRepository.save(orderItems);
 
-    // await this.cartService.deleteCartUser(userId);
+    await this.productService.bulkUpdate(updateProducts);
+
+    await this.cartService.deleteCartUser(userId);
     return {
       id: order.id,
       createdAt: order.created_at,

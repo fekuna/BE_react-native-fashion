@@ -150,4 +150,20 @@ export class ProductService {
 
     await console.log('Delete Product Image found', found);
   }
+
+  async bulkUpdate(data: ProductUpdateDto[]): Promise<any> {
+    console.log('bulkUpdate: ', data);
+    const filtered = data.map((pItem) => {
+      const { id, title, description, stock, price } = pItem;
+      return {
+        id,
+        title,
+        description,
+        stock,
+        price,
+      };
+    });
+
+    return await this.productRepository.save(filtered);
+  }
 }

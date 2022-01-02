@@ -1,4 +1,6 @@
 export class ProductUpdateDto {
+  id?: number;
+
   title?: string;
 
   description?: string;
