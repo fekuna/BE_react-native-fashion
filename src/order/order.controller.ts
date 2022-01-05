@@ -31,4 +31,11 @@ export class OrderController {
   async getOrderUser(@GetCurrentUserId() userId: string): Promise<any> {
     return await this.orderService.getOrderUser(userId);
   }
+
+  @Get('/graph')
+  async getOrderUserGroupByDate(
+    @GetCurrentUserId() userId: string,
+  ): Promise<any> {
+    return await this.orderService.getOrderUserGroupByDate(userId);
+  }
 }

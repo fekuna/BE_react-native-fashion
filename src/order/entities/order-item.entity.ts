@@ -1,6 +1,7 @@
 import {
   BaseEntity,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -24,6 +25,9 @@ export class OrderItem extends BaseEntity {
 
   @Column()
   image: string;
+
+  @CreateDateColumn()
+  created_at: string;
 
   @ManyToOne(() => Order, (order) => order.order_items)
   @JoinColumn({ name: 'order_id' })

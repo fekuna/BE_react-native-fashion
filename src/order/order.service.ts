@@ -102,4 +102,16 @@ export class OrderService {
       },
     });
   }
+
+  async getOrderUserGroupByDate(userId: string): Promise<any> {
+    // const orderGroup = await this.orderRepository.query(
+    //   'SELECT SUM(), MONTH(orders.created_at) as month, created_at FROM orders JOIN  GROUP BY MONTH(orders.created_at)',
+    // );
+    const orderGroup = await this.orderRepository.query(
+      `SELECT orders.id as id, orders.created_at as createdAt, SUM(order_items.price * order_items.quantity) as totalPrice FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.user_id = ? GROUP BY MONTH(orders.created_at)`,
+      [userId],
+    );
+
+    return orderGroup;
+  }
 }
