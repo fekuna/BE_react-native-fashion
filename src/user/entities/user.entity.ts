@@ -40,7 +40,7 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   rt_hash: string;
 
-  @OneToMany(() => Product, (product) => product.user)
+  @OneToMany(() => Product, (product) => product.seller)
   // @Exclude({ toPlainOnly: true })
   products: Product[];
 

@@ -34,8 +34,8 @@ export class Product extends BaseEntity {
   product_images: ProductImage[];
 
   @ManyToOne(() => User, (user) => user.products)
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @JoinColumn({ name: 'seller_id' })
+  seller: User;
 
   @ManyToMany(() => Category)
   @JoinTable({

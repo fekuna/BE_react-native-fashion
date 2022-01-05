@@ -85,7 +85,7 @@ export class ProductService {
     const product = await this.productRepository
       .create({
         ...createProductDto,
-        user: {
+        seller: {
           id: userId,
         },
         categories: createProductDto.categories?.map((id) => ({ id })),
