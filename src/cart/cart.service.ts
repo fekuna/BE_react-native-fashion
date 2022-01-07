@@ -96,7 +96,7 @@ export class CartService {
 
     const productFound = await this.productService.getProductBy({
       id: data.productId,
-      relations: ['user'],
+      relations: ['seller'],
     });
     console.log('Add To Cart');
 

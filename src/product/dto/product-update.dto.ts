@@ -10,4 +10,6 @@ export class ProductUpdateDto {
   stock?: number;
 
   categories?: number[];
+
+  sizes?: number[];
 }

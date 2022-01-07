@@ -10,8 +10,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Category } from '../../category/entities/category.entity';
+import { Category } from './category.entity';
 import { ProductImage } from './product-image.entity';
+import { ProductSize } from './product-size.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -30,6 +31,14 @@ export class Product extends BaseEntity {
   @Column()
   stock: number;
 
+  @ManyToMany(() => ProductSize)
+  @JoinTable({
+    name: 'product_sizes',
+    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'size_id', referencedColumnName: 'id' },
+  })
+  sizes: ProductSize[];
+
   @OneToMany(() => ProductImage, (pImage) => pImage.product)
   product_images: ProductImage[];
 
@@ -37,7 +46,7 @@ export class Product extends BaseEntity {
   @JoinColumn({ name: 'seller_id' })
   seller: User;
 
-  @ManyToMany(() => Category)
+  @ManyToMany(() => Category, (category) => category.products)
   @JoinTable({
     name: 'product_categories',
     joinColumn: { name: 'product_id', referencedColumnName: 'id' },

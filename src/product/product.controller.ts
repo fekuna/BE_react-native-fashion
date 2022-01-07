@@ -43,6 +43,7 @@ export class ProductController {
       'product_images',
       'categories',
       'user_favorites',
+      'sizes',
     ]);
   }
 

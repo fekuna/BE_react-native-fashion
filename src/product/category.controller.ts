@@ -14,17 +14,18 @@ import { Category } from './entities/category.entity';
 
 @Controller('categories')
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(private readonly categorySevice: CategoryService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getPermissions(): Promise<Category[]> {
-    return this.categoryService.all();
+  async getCategories(): Promise<Category[]> {
+    console.log('getCategories');
+    return this.categorySevice.getCategories();
   }
 
   @Post()
   async createCategory(@Body('name') name: string): Promise<Category> {
-    return this.categoryService.create({ name });
+    return this.categorySevice.createCategory({ name });
   }
 
   @Put('/:id')
@@ -32,11 +33,11 @@ export class CategoryController {
     @Param('id') categoryId: number,
     @Body('name') name: string,
   ): Promise<any> {
-    return this.categoryService.update(categoryId, { name });
+    return this.categorySevice.updateCategory(categoryId, { name });
   }
 
   @Delete('/:id')
   async deleteCategory(@Param('id') CategoryId): Promise<any> {
-    return this.categoryService.delete(CategoryId);
+    return this.categorySevice.deleteCategory(CategoryId);
   }
 }

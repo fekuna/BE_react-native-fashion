@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { OrderItem } from './order-item.entity';
+import { OrderStatus } from './order-status.entity';
 
 @Entity('orders')
 export class Order extends BaseEntity {
@@ -25,6 +26,10 @@ export class Order extends BaseEntity {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   order_items: OrderItem[];
+
+  @ManyToOne(() => OrderStatus)
+  @JoinColumn({ name: 'status_id' })
+  status: OrderStatus;
 
   @Expose()
   get total(): number {

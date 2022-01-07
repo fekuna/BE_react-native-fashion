@@ -12,5 +12,6 @@ export class ProductCreateDto {
   @IsNotEmpty()
   stock: number;
 
-  categories?: number[];
+  categories?: Array<number>;
+  sizes?: Array<number>;
 }

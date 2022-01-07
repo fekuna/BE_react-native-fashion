@@ -40,6 +40,7 @@ export class CartController {
     @GetCurrentUserId() userId: string,
     @Body() data: AddCartItemDto,
   ) {
+    console.log('Controller addToCart', userId);
     return await this.cartService.addToCart(userId, data);
   }
 

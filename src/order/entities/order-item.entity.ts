@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import {
   BaseEntity,
   Column,
@@ -7,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { OrderItemStatus } from './order-item-status.entity';
 import { Order } from './order.entity';
 
 @Entity('order_items')
@@ -25,6 +27,14 @@ export class OrderItem extends BaseEntity {
 
   @Column()
   image: string;
+
+  @ManyToOne(() => OrderItemStatus)
+  @JoinColumn({ name: 'status_id' })
+  status: OrderItemStatus;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'seller_id' })
+  seller: User;
 
   @CreateDateColumn()
   created_at: string;

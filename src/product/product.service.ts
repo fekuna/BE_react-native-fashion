@@ -9,6 +9,7 @@ import { FilterProductsDto } from './dto/filter-products.dto';
 import { Product } from './entities/product.entity';
 import { ProductUpdateDto } from './dto/product-update.dto';
 import { ProductImage } from './entities/product-image.entity';
+import { Category } from './entities/category.entity';
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -19,6 +20,8 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<ProductImage>,
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
   ) {}
 
   async getProductBy({
@@ -47,14 +50,29 @@ export class ProductService {
     filter: FilterProductsDto,
     relations: string[] = [],
   ): Promise<any> {
-    const { take, page, keyword } = filter;
+    const { take, page, keyword, categoryId } = filter;
+    console.log('getProducts', { take, page, keyword, categoryId });
     const skip = (page - 1) * take;
+    console.log('getProducts', categoryId);
 
     const [data, total] = await this.productRepository.findAndCount({
-      where: [
-        { title: Like('%' + keyword + '%') },
-        { description: Like('%' + keyword + '%') },
-      ],
+      where: (qb) => {
+        qb.where([
+          { title: Like('%' + keyword + '%') },
+          { description: Like('%' + keyword + '%') },
+        ]);
+
+        if (categoryId && +categoryId !== 0) {
+          console.log('inside IF categoryId');
+          qb.andWhere('productCategories.id = :categoryId', { categoryId });
+        }
+      },
+      join: {
+        alias: 'prods',
+        innerJoinAndSelect: {
+          productCategories: 'prods.categories',
+        },
+      },
       relations,
       take,
       skip,
@@ -81,7 +99,8 @@ export class ProductService {
     userId: string,
     images: Express.Multer.File[],
   ): Promise<Product> {
-    console.log('images: ', images);
+    // console.log('images: ', images);
+    // console.log('ProductCreateDto: ', createProductDto);
     const product = await this.productRepository
       .create({
         ...createProductDto,
@@ -89,6 +108,7 @@ export class ProductService {
           id: userId,
         },
         categories: createProductDto.categories?.map((id) => ({ id })),
+        sizes: createProductDto.sizes?.map((id) => ({ id })),
       })
       .save();
 
@@ -124,6 +144,7 @@ export class ProductService {
       ...found,
       ...data,
       categories: data.categories?.map((id) => ({ id })),
+      sizes: data.sizes?.map((id) => ({ id })),
     });
   }
 
