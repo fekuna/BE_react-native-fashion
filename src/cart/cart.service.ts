@@ -23,20 +23,34 @@ export class CartService {
     id,
     productId,
     relations,
+    userId,
   }: {
     id?: number;
     productId?: number;
     relations?: string[];
+    userId?: string;
   }) {
     const cartItem = await this.cartRepository.findOne({
-      where: [
-        { id },
-        {
-          product: {
-            id: productId,
-          },
-        },
-      ],
+      where: userId
+        ? [
+            { id, user: { id: userId } },
+            {
+              product: {
+                id: productId,
+              },
+              user: {
+                id: userId,
+              },
+            },
+          ]
+        : [
+            { id },
+            {
+              product: {
+                id: productId,
+              },
+            },
+          ],
       relations,
     });
 
@@ -86,11 +100,16 @@ export class CartService {
   }
 
   async addToCart(userId: string, data: AddCartItemDto) {
+    console.log('addToCart', data);
     const cartItem = await this.cartRepository.findOne({
       where: {
         product: {
           id: data.productId,
         },
+        user: {
+          id: userId,
+        },
+        size: data.size ? data.size : null,
       },
     });
 
@@ -98,11 +117,12 @@ export class CartService {
       id: data.productId,
       relations: ['seller'],
     });
-    console.log('Add To Cart');
+    console.log('Add To Cart', cartItem);
 
     if (
-      cartItem?.quantity + data.quantity > productFound?.stock ||
-      data.quantity > productFound?.stock
+      cartItem &&
+      (cartItem?.quantity + data.quantity > productFound?.stock ||
+        data.quantity > productFound?.stock)
     ) {
       console.log('stock is not sufficient');
       throw new BadRequestException('Stock is not sufficient');
@@ -123,6 +143,7 @@ export class CartService {
       user: {
         id: userId,
       },
+      size: data.size,
     });
   }
 

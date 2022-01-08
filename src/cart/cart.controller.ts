@@ -34,6 +34,19 @@ export class CartController {
     return this.cartService.getCart(userId, filter, ['product']);
   }
 
+  @Get('/item/:id')
+  @HttpCode(HttpStatus.OK)
+  async getCartItemById(
+    @GetCurrentUserId() userId,
+    @Param('id') id: number,
+  ): Promise<Cart> {
+    return this.cartService.getCartItemBy({
+      userId,
+      productId: id,
+      relations: ['product'],
+    });
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async addToCart(

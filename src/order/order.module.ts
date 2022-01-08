@@ -8,6 +8,10 @@ import { CartModule } from 'src/cart/cart.module';
 import { ProductModule } from 'src/product/product.module';
 import { OrderStatus } from './entities/order-status.entity';
 import { OrderItemStatus } from './entities/order-item-status.entity';
+import { OrderStatusService } from './order-status.service';
+import { OrderItemStatusService } from './order-item-status.service';
+import { OrderStatusController } from './order-status.controller';
+import { OrderItemStatusController } from './order-item-status.controller';
 
 @Module({
   imports: [
@@ -15,7 +19,11 @@ import { OrderItemStatus } from './entities/order-item-status.entity';
     CartModule,
     ProductModule,
   ],
-  providers: [OrderService],
-  controllers: [OrderController],
+  providers: [OrderService, OrderStatusService, OrderItemStatusService],
+  controllers: [
+    OrderController,
+    OrderStatusController,
+    OrderItemStatusController,
+  ],
 })
 export class OrderModule {}
