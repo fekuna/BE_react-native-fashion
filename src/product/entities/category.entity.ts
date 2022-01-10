@@ -15,7 +15,9 @@ export class Category {
   @Column()
   name: string;
 
-  @ManyToMany(() => Product, (product) => product.categories)
+  @ManyToMany(() => Product, (product) => product.categories, {
+    onDelete: 'CASCADE',
+  })
   @JoinTable({
     name: 'product_categories',
     joinColumn: { name: 'category_id', referencedColumnName: 'id' },

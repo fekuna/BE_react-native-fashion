@@ -26,16 +26,16 @@ export class ProductService {
 
   async getProductBy({
     id,
-    userId,
+    sellerId,
     relations,
   }: {
     id?: number;
-    userId?: string;
+    sellerId?: string;
     relations?: string[];
   }): Promise<Product> {
-    console.log({ userId });
+    console.log({ sellerId });
     const found = await this.productRepository.findOne({
-      where: id && userId ? { id, user: { id: userId } } : [{ id }],
+      where: id && sellerId ? { id, seller: { id: sellerId } } : [{ id }],
       relations,
     });
 
@@ -148,10 +148,10 @@ export class ProductService {
     });
   }
 
-  async deleteProduct(id: number, userId: string): Promise<any> {
+  async deleteProduct(id: number, sellerId: string): Promise<any> {
     const product = await this.getProductBy({
       id,
-      userId,
+      sellerId,
       relations: ['product_images'],
     });
     console.log('DELETE product', product);
