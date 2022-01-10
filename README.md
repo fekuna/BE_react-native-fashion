@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) framework TypeScript is a backend for [React-Native-Fashion](https://github.com/fekuna/react-native-fashion).
 
 ## Installation
 
@@ -35,6 +35,9 @@ $ npm install
 ## Running the app
 
 ```bash
+# use docker
+$ docker-compose up
+
 # development
 $ npm run start
 

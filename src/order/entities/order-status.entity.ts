@@ -7,4 +7,7 @@ export class OrderStatus extends BaseEntity {
 
   @Column()
   name: string;
+
+  @Column({ type: 'boolean', default: true })
+  isAvailable: boolean;
 }

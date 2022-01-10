@@ -41,8 +41,13 @@ export class Order extends BaseEntity {
   @Expose()
   get total(): number {
     return (
-      this.order_items.reduce((sum, i) => sum + i.quantity * i.price, 0) +
-      this.shipping_fee
+      this.order_items.reduce((sum, i) => {
+        if (i.status.isAvailable) {
+          return sum + i.quantity * i.price;
+        }
+
+        return 0;
+      }, 0) + this.shipping_fee
     );
   }
 }
