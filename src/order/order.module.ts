@@ -12,6 +12,8 @@ import { OrderStatusService } from './order-status.service';
 import { OrderItemStatusService } from './order-item-status.service';
 import { OrderStatusController } from './order-status.controller';
 import { OrderItemStatusController } from './order-item-status.controller';
+import { OrderItemService } from './order-item.service';
+import { OrderItemController } from './order-item.controller';
 
 @Module({
   imports: [
@@ -19,9 +21,15 @@ import { OrderItemStatusController } from './order-item-status.controller';
     CartModule,
     ProductModule,
   ],
-  providers: [OrderService, OrderStatusService, OrderItemStatusService],
+  providers: [
+    OrderService,
+    OrderItemService,
+    OrderStatusService,
+    OrderItemStatusService,
+  ],
   controllers: [
     OrderController,
+    OrderItemController,
     OrderStatusController,
     OrderItemStatusController,
   ],

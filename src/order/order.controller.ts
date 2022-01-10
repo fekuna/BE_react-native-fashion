@@ -3,7 +3,9 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/common/decorators';
@@ -44,5 +46,13 @@ export class OrderController {
     @GetCurrentUserId() userId: string,
   ): Promise<any> {
     return await this.orderService.getOrderUserGroupByDate(userId);
+  }
+
+  @Put('/status/:id')
+  async updateOrderStatus(
+    @Param('id') orderId: number,
+    @Body('statusId') statusId: number,
+  ): Promise<any> {
+    return await this.orderService.updateOrderStatus(orderId, statusId);
   }
 }

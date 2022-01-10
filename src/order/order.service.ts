@@ -138,4 +138,12 @@ export class OrderService {
 
     return orderGroup;
   }
+
+  async updateOrderStatus(orderId: number, statusId: number) {
+    return await this.orderRepository.update(orderId, {
+      status: {
+        id: statusId,
+      },
+    });
+  }
 }
