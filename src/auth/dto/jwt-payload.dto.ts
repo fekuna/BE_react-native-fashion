@@ -4,6 +4,7 @@ export class JwtPayloadDto {
   email: string;
   roleId: number;
   img: string;
+  address: string;
   iat?: number;
   exp?: number;
 }

@@ -1,4 +1,5 @@
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
@@ -6,6 +7,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/common/decorators';
+import { OrderCreateRequest } from './dto/order-create-request';
 import { OrderCreateResponseDto } from './dto/order-create-response.dto';
 import { Order } from './entities/order.entity';
 import { OrderService } from './order.service';
@@ -23,8 +25,13 @@ export class OrderController {
   @Post()
   async createOrder(
     @GetCurrentUserId() userId: string,
+    @Body() data: OrderCreateRequest,
   ): Promise<OrderCreateResponseDto> {
-    return await this.orderService.orderCreate(userId);
+    return await this.orderService.orderCreate(
+      userId,
+      data.shippingFee,
+      data.address,
+    );
   }
 
   @Get('user')

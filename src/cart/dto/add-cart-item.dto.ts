@@ -8,4 +8,6 @@ export class AddCartItemDto {
   quantity: number;
 
   size?: string;
+
+  image?: string;
 }

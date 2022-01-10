@@ -20,6 +20,9 @@ export class Cart extends BaseEntity {
   @Column({ nullable: true })
   size: string;
 
+  @Column({ nullable: true })
+  image: string;
+
   @ManyToOne(() => User, (user) => user.cart)
   @JoinColumn({ name: 'user_id' })
   user: User;

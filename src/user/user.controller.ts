@@ -1,4 +1,5 @@
 import {
+  Body,
   ClassSerializerInterceptor,
   Controller,
   Get,
@@ -11,7 +12,12 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtPayloadDto } from 'src/auth/dto/jwt-payload.dto';
-import { GetCurrentUser, Public } from 'src/common/decorators';
+import {
+  GetCurrentUser,
+  GetCurrentUserId,
+  Public,
+} from 'src/common/decorators';
+import { UserUpdateDto } from './dto/user-update.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import { editFileName, imageFileFilter } from './utils/user-file-upload.utils';
@@ -52,5 +58,13 @@ export class UserController {
     @UploadedFile() file,
   ) {
     return this.userService.userUpdatePhoto(user, file.filename);
+  }
+
+  @Put('/:id')
+  async userProfileUpdate(
+    @GetCurrentUserId() userId: string,
+    @Body() data: UserUpdateDto,
+  ) {
+    return this.userService.userUpdate(userId, data);
   }
 }

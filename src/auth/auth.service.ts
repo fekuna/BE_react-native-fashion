@@ -38,6 +38,7 @@ export class AuthService {
       email: newUser.email,
       roleId: roleId,
       img: newUser.img,
+      address: newUser.address,
     });
     await this.updateRtHash(newUser.id, tokens.refresh_token);
     return tokens;
@@ -47,6 +48,7 @@ export class AuthService {
     const user = await this.userService.getUserBy({
       email: data.email,
       relations: ['role'],
+      forLogin: true,
     });
 
     const passwordMatches = await bcrypt.compare(data.password, user.password);
@@ -59,6 +61,7 @@ export class AuthService {
       email: user.email,
       roleId: user.role.id,
       img: user.img,
+      address: user.address,
     });
     await this.updateRtHash(user.id, tokens.refresh_token);
 
@@ -86,6 +89,7 @@ export class AuthService {
       email: user.email,
       roleId: user.role.id,
       img: user.img,
+      address: user.address,
     });
     await this.updateRtHash(user.id, tokens.refresh_token);
     return tokens;
@@ -109,6 +113,7 @@ export class AuthService {
     roleId,
     img,
     name,
+    address,
   }: JwtPayloadDto): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
@@ -118,6 +123,7 @@ export class AuthService {
           email,
           roleId,
           img,
+          address,
         },
         {
           secret: this.config.get<string>('AT_SECRET'),
@@ -132,6 +138,7 @@ export class AuthService {
           email,
           roleId,
           img,
+          address,
         },
         {
           secret: this.config.get<string>('RT_SECRET'),

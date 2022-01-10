@@ -28,13 +28,15 @@ export class OrderItem extends BaseEntity {
   @Column()
   image: string;
 
+  @Column({ nullable: true })
+  size: string;
+
   @ManyToOne(() => OrderItemStatus)
   @JoinColumn({ name: 'status_id' })
   status: OrderItemStatus;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'seller_id' })
-  seller: User;
+  @Column({ name: 'seller_id' })
+  sellerId: string;
 
   @CreateDateColumn()
   created_at: string;

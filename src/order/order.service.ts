@@ -18,12 +18,21 @@ export class OrderService {
     private readonly productService: ProductService,
   ) {}
 
-  async orderCreate(userId: string): Promise<OrderCreateResponseDto> {
+  async orderCreate(
+    userId: string,
+    shippingFee: number,
+    address: string,
+  ): Promise<OrderCreateResponseDto> {
     const cartItems = await this.cartService.getCart(userId, {}, [
       'product',
       'product.product_images',
+      'product.seller',
     ]);
     console.log('Order Create', cartItems.data);
+
+    if (cartItems.data.length < 1) {
+      throw new BadRequestException(`No item found in cart, please add some`);
+    }
 
     // Check to ensure order quantity is not more than product stock
     cartItems.data.map((item) => {
@@ -39,7 +48,14 @@ export class OrderService {
       user: {
         id: userId,
       },
+      shipping_fee: shippingFee,
+      status: {
+        id: 1,
+      },
+      address,
     });
+
+    console.log('orderCreate', order);
 
     let orderItems = [];
     let updateProducts = [];
@@ -58,6 +74,11 @@ export class OrderService {
           order: {
             id: order.id,
           },
+          status: {
+            id: 1,
+          },
+          size: cartItem.size,
+          sellerId: cartItem.product.seller.id,
         },
       ];
 
@@ -82,19 +103,22 @@ export class OrderService {
       id: order.id,
       createdAt: order.created_at,
       userId: order.user.id,
+      statusId: order.status.id,
+      shippingFee,
+      address,
       orderItems,
     };
   }
 
   async getOrders(): Promise<Order[]> {
     return await this.orderRepository.find({
-      relations: ['order_items'],
+      relations: ['order_items', 'status', 'order_items.status'],
     });
   }
 
   async getOrderUser(userId: string): Promise<any> {
     return await this.orderRepository.find({
-      relations: ['order_items'],
+      relations: ['order_items', 'status', 'order_items.status'],
       where: {
         user: {
           id: userId,
@@ -108,7 +132,7 @@ export class OrderService {
     //   'SELECT SUM(), MONTH(orders.created_at) as month, created_at FROM orders JOIN  GROUP BY MONTH(orders.created_at)',
     // );
     const orderGroup = await this.orderRepository.query(
-      `SELECT orders.id as id, orders.created_at as createdAt, SUM(order_items.price * order_items.quantity) as totalPrice FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.user_id = ? GROUP BY MONTH(orders.created_at)`,
+      `SELECT orders.id as id, orders.created_at as createdAt, SUM((order_items.price * order_items.quantity) + orders.shipping_fee) as totalPrice FROM orders JOIN order_items ON orders.id = order_items.order_id WHERE orders.user_id = ? GROUP BY MONTH(orders.created_at)`,
       [userId],
     );
 

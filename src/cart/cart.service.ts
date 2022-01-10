@@ -144,6 +144,7 @@ export class CartService {
         id: userId,
       },
       size: data.size,
+      image: data.image,
     });
   }
 

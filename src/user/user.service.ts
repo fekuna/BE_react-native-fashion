@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -30,10 +31,12 @@ export class UserService {
     id,
     email,
     relations,
+    forLogin,
   }: {
     id?: string;
     email?: string;
     relations?: string[];
+    forLogin?: boolean;
   }): Promise<User> {
     const found = await this.userRepository.findOne({
       where: [{ id }, { email }],
@@ -41,7 +44,11 @@ export class UserService {
     });
 
     if (!found) {
-      throw new NotFoundException(`User not found`);
+      if (forLogin) {
+        throw new ForbiddenException('Incorrect email or password');
+      }
+
+      throw new NotFoundException('User not found');
     }
 
     return found;
@@ -68,8 +75,9 @@ export class UserService {
     return created;
   }
 
-  async userUpdate(id: string, data: UserUpdateDto): Promise<void> {
-    await this.userRepository.update(id, data);
+  async userUpdate(id: string, data: UserUpdateDto): Promise<any> {
+    console.log('userUpdate', { id, data });
+    return await this.userRepository.update(id, data);
   }
 
   async userUpdatePhoto(user: JwtPayloadDto, newImage: string): Promise<void> {
