@@ -47,6 +47,29 @@ export class ProductController {
     ]);
   }
 
+  @Get('/favorite')
+  async getProductFavorites(@GetCurrentUserId() userId): Promise<any> {
+    console.log({ userId });
+    return this.productService.getProductFavorites(userId);
+  }
+
+  @Post('/favorite/:id')
+  async addProductFavorite(
+    @GetCurrentUserId() userId,
+    @Param('id') productId,
+  ): Promise<any> {
+    console.log({ userId, productId });
+    return this.productService.addProductFavorite(userId, productId);
+  }
+
+  @Delete('/favorite/:productId')
+  async removeProductFavorite(
+    @GetCurrentUserId() userId,
+    @Param('productId') productId,
+  ): Promise<any> {
+    return this.productService.removeProductFavorite(userId, productId);
+  }
+
   @Post()
   @UseInterceptors(
     FilesInterceptor('image', 10, {

@@ -1,7 +1,11 @@
 import * as fs from 'fs';
 import { promisify } from 'util';
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { ProductCreateDto } from './dto/product-create.dto';
@@ -186,5 +190,88 @@ export class ProductService {
     });
 
     return await this.productRepository.save(filtered);
+  }
+
+  async addProductFavorite(userId: string, productId: number): Promise<any> {
+    const product = await this.productRepository.findOne({
+      where: (qb) => {
+        qb.where({ id: productId });
+        //   .andWhere('user_favorites.id = :userId', {
+        //   userId,
+        // });
+      },
+      join: {
+        alias: 'prods',
+        leftJoinAndSelect: {
+          user_favorites: 'prods.user_favorites',
+        },
+      },
+    });
+
+    const found = product.user_favorites.some(
+      (uFavorite) => uFavorite.id === userId,
+    );
+
+    if (found) {
+      return await this.productRepository.save({
+        ...product,
+        user_favorites: product.user_favorites.filter(
+          (favorite) => favorite.id !== userId,
+        ),
+      });
+    }
+
+    // console.log('addProductFavorite', product);
+
+    return await this.productRepository.save({
+      ...product,
+      user_favorites: [...product.user_favorites, { id: userId }],
+    });
+  }
+
+  async getProductFavorites(userId: string): Promise<any> {
+    try {
+      return await this.productRepository.find({
+        where: (qb) => {
+          qb.where('user_favorites.id = :userId', {
+            userId,
+          });
+        },
+        join: {
+          alias: 'prods',
+          leftJoinAndSelect: {
+            user_favorites: 'prods.user_favorites',
+          },
+        },
+        relations: ['product_images', 'sizes'],
+      });
+    } catch (err) {
+      throw new BadRequestException('Failed to get Product Favorites');
+    }
+  }
+
+  async removeProductFavorite(userId: string, productId: number): Promise<any> {
+    let product;
+    try {
+      product = await this.productRepository.findOne({
+        where: { id: productId },
+        relations: ['user_favorites'],
+      });
+    } catch (err) {
+      throw new NotFoundException('Product not found');
+    }
+
+    try {
+      return await this.productRepository.save({
+        ...product,
+        user_favorites: product.user_favorites.filter(
+          (uFavorite) => uFavorite.id !== userId,
+        ),
+      });
+    } catch (err) {
+      throw new BadRequestException('Failed to remove user product favorite');
+    }
+
+    // console.log('removeProductFavorite', product);
   }
 }
